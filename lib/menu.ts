@@ -65,7 +65,7 @@ export const getMenuBySlug = async (clientSlug: string): Promise<MenuData | null
   const supabase = createServiceSupabaseClient();
 
   const { data: client, error: clientError } = await supabase
-    .from<ClientRow>('clients')
+    .from('clients')
     .select('id, slug, name, logo_url, tagline, theme_primary, theme_secondary')
     .eq('slug', clientSlug)
     .single();
@@ -76,7 +76,7 @@ export const getMenuBySlug = async (clientSlug: string): Promise<MenuData | null
   }
 
   const { data: categoriesData, error: categoriesError } = await supabase
-    .from<CategoryRow>('menu_categories')
+    .from('menu_categories')
     .select('id, name, position')
     .eq('client_id', client.id)
     .order('position', { ascending: true });
@@ -86,7 +86,7 @@ export const getMenuBySlug = async (clientSlug: string): Promise<MenuData | null
   }
 
   const { data: itemsData, error: itemsError } = await supabase
-    .from<MenuItemRow>('menu_items')
+    .from('menu_items')
     .select('id, category_id, name, description, price_cents, image_url, is_special')
     .eq('client_id', client.id)
     .eq('is_visible', true)
