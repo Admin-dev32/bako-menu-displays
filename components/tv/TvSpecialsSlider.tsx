@@ -34,44 +34,69 @@ export default function TvSpecialsSlider({ specials }: TvSpecialsSliderProps) {
   if (!slides.length || !currentSpecial) return null;
 
   return (
-    <div className="relative flex w-full overflow-hidden rounded-3xl border border-white/5 bg-slate-900/60 shadow-2xl ring-1 ring-white/10">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSpecial.id}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -30 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="grid w-full grid-cols-1 md:grid-cols-5"
-        >
-          <div
-            className="relative col-span-2 min-h-[280px] md:min-h-[360px]"
-            style={{
-              backgroundImage: `linear-gradient(180deg,rgba(2,6,23,0.55),rgba(2,6,23,0.8)), url(${currentSpecial.imageUrl ?? ''})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-primary/30 via-transparent to-brand-accent/25 mix-blend-screen" />
-          </div>
+    <div className="relative w-full">
+      <div className="mb-2 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg font-bold text-white shadow-lg shadow-black/40">
+          ★
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary">Today&apos;s Special</p>
+          <p className="text-base text-slate-200">Chef&apos;s highlights rotating every few minutes</p>
+        </div>
+      </div>
 
-          <div className="col-span-3 flex flex-col justify-center gap-4 px-8 py-10 md:px-12">
-            {currentSpecial.badge ? (
-              <span className="w-fit rounded-full bg-brand-primary/15 px-4 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-brand-primary">
-                {currentSpecial.badge}
-              </span>
-            ) : null}
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="font-heading text-4xl leading-tight md:text-5xl">{currentSpecial.name}</h2>
-                <p className="mt-2 text-xl text-slate-200 md:text-2xl">{currentSpecial.description}</p>
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0b1220]/80 shadow-2xl shadow-black/50 backdrop-blur-lg">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSpecial.id}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="grid w-full grid-cols-1 overflow-hidden md:grid-cols-[1.1fr_0.9fr]"
+          >
+            <div className="flex flex-col justify-center gap-4 px-6 py-8 lg:px-10">
+              {currentSpecial.badge ? (
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand-primary/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-brand-primary">
+                  {currentSpecial.badge}
+                </span>
+              ) : null}
+              <div className="space-y-2">
+                <p className="text-sm uppercase tracking-[0.25em] text-brand-accent">Special</p>
+                <h2 className="font-heading text-4xl leading-tight text-white lg:text-5xl">{currentSpecial.name}</h2>
+                <p className="text-lg text-slate-200 lg:text-xl">{currentSpecial.description}</p>
               </div>
-              <p className="text-4xl font-black text-brand-accent md:text-5xl">{currentSpecial.priceText}</p>
+              <div className="flex items-center gap-3 text-sm text-slate-300">
+                <span className="inline-flex h-2 w-2 rounded-full bg-brand-accent" />
+                Freshly prepared · Limited availability
+              </div>
             </div>
-            <p className="text-lg text-slate-300 md:text-xl">Serving time · 10 mins · Freshly made</p>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+
+            <div className="relative min-h-[260px] bg-gradient-to-br from-black/60 via-black/50 to-black/60">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: currentSpecial.imageUrl
+                    ? `linear-gradient(180deg,rgba(5,8,22,0.6),rgba(5,8,22,0.85)), url(${currentSpecial.imageUrl})`
+                    : 'linear-gradient(180deg,rgba(5,8,22,0.6),rgba(5,8,22,0.85))',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(249,115,22,0.35),transparent_45%),radial-gradient(circle_at_70%_70%,rgba(34,197,94,0.35),transparent_45%)] mix-blend-screen" />
+              <div className="relative flex h-full items-center justify-center p-6">
+                <div className="flex flex-col items-center gap-3 rounded-2xl bg-black/50 px-6 py-4 shadow-[0_18px_48px_rgba(0,0,0,0.45)] ring-1 ring-white/10">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/80">Only</p>
+                  <p className="rounded-full bg-emerald-500 px-5 py-2 text-3xl font-black text-slate-900 shadow-lg shadow-emerald-500/50">
+                    {currentSpecial.priceText}
+                  </p>
+                  <p className="text-xs text-slate-200">+ tax</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
