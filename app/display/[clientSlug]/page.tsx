@@ -26,12 +26,14 @@ export default async function DisplayPage({ params }: DisplayPageProps) {
     priceText: formatPrice(special.priceCents),
   }));
 
-  const items: TvMenuItem[] = menuData.items.map((item) => ({
+    const items: TvMenuItem[] = menuData.items.map((item) => ({
     id: item.id,
     name: item.name,
     description: item.description,
     priceText: formatPrice(item.priceCents),
+    imageUrl: item.imageUrl, // 👈 aquí le pasamos la foto al grid
   }));
+
 
   return (
     <TvLayout
