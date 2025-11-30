@@ -1,0 +1,2 @@
+This placeholder text file replaces the previous demo logo image.
+Use your own PNG/SVG logo for production deployments.
