@@ -4,9 +4,13 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { TvMenuItem } from './TvMenuGrid';
 
+// Exportamos el tipo TvSpecial para que page.tsx siga feliz
+export type TvSpecial = TvMenuItem & {
+  imageUrl?: string | null;
+};
+
 interface TvSpecialsSliderProps {
-  // Usamos TvMenuItem y le agregamos opcionalmente imageUrl
-  specials: (TvMenuItem & { imageUrl?: string | null })[];
+  specials: TvSpecial[];
 }
 
 const cardVariants = {
