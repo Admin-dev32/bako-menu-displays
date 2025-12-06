@@ -7,7 +7,6 @@ export interface TvMenuItem {
   name: string;
   description: string | null;
   priceText: string;
-  imageUrl?: string | null;
 }
 
 interface TvMenuGridProps {
@@ -20,98 +19,50 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.08,
-      delayChildren: 0.2,
-    },
-  },
+      delayChildren: 0.2
+    }
+  }
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { ease: 'easeOut', duration: 0.4 } },
+  show: { opacity: 1, y: 0, transition: { ease: 'easeOut', duration: 0.4 } }
 };
 
 export default function TvMenuGrid({ items }: TvMenuGridProps) {
   if (!items?.length) return null;
 
   return (
-    <div className="flex h-full w-full flex-col gap-4">
-      {/* Título simple, sin panel */}
-      <div className="flex items-center justify-between gap-4">
+    <div className="w-full rounded-3xl border border-white/10 bg-[rgba(9,12,21,0.75)] p-6 shadow-inner shadow-black/60 ring-1 ring-white/10 md:p-8">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-primary">
-            Chalkboard Classics
-          </p>
-          <h3 className="font-heading text-2xl md:text-3xl">Menu</h3>
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-brand-primary">Chalkboard Classics</p>
+          <h3 className="font-heading text-3xl md:text-4xl">Menu</h3>
         </div>
-        <p className="rounded-full bg-black/40 px-4 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-100">
-          All prices in USD
-        </p>
+        <p className="rounded-full bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.2em] text-slate-200">All prices in USD</p>
       </div>
-
-      {/* GRID sin ningún fondo, solo celdas */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid h-full w-full grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
       >
         {items.map((item) => (
           <motion.div
             key={item.id}
             variants={itemVariants}
-            className="relative flex flex-col items-center gap-2 text-center"
+            className="relative flex flex-col items-center gap-4 rounded-3xl bg-white/5 px-4 pt-6 pb-5 text-center shadow-lg shadow-black/40 backdrop-blur"
           >
-            {/* Contenedor de la imagen con levitación */}
-            <motion.div
-              className="relative mb-1 h-28 w-28 overflow-visible md:h-36 md:w-36"
-            >
-              <motion.div
-                className="h-full w-full overflow-hidden rounded-3xl shadow-xl shadow-black/60"
-                animate={{ y: [0, -8, 0] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                {item.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-black/60 text-2xl font-bold">
-                    {item.name.charAt(0)}
-                  </div>
-                )}
-              </motion.div>
-
-              {/* Precio con zoom in / out */}
-              <motion.div
-                className="absolute right-1 top-1 rounded-full bg-emerald-400 px-3 py-1 text-xs font-semibold text-slate-900 shadow-lg shadow-emerald-500/40 md:right-2 md:top-2 md:text-sm"
-                animate={{ scale: [1, 1.08, 1] }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 0.2,
-                }}
-              >
-                {item.priceText}
-              </motion.div>
-            </motion.div>
-
-            {/* Nombre + descripción, sin tarjetas ni fondos */}
-            <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white md:text-sm">
-              {item.name}
-            </h4>
-            {item.description ? (
-              <p className="max-w-[220px] text-[11px] text-slate-100/90 md:text-xs">
-                {item.description}
-              </p>
-            ) : null}
+            <div className="absolute right-4 top-4 rounded-full bg-emerald-500 px-3 py-1 text-sm font-semibold text-slate-900 shadow-lg shadow-emerald-500/40">
+              {item.priceText}
+            </div>
+            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-slate-800 text-xl font-bold uppercase text-white shadow-inner shadow-black/40">
+              {item.name.charAt(0)}
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.15em] text-white md:text-base">{item.name}</h4>
+              <p className="text-xs text-slate-300/90 md:text-sm">{item.description}</p>
+            </div>
           </motion.div>
         ))}
       </motion.div>

@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS menu_categories (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   client_id uuid NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
   name text NOT NULL,
+  display_name text,
+  icon text,
   position integer NOT NULL DEFAULT 0,
   created_at timestamptz DEFAULT now()
 );
@@ -31,9 +33,21 @@ CREATE TABLE IF NOT EXISTS menu_items (
   description text,
   price_cents integer NOT NULL,
   image_url text,
+  kind text,
+  variant_label text,
   is_visible boolean NOT NULL DEFAULT true,
   is_special boolean NOT NULL DEFAULT false,
   created_at timestamptz DEFAULT now()
+);
+
+-- Display configurations allow per-client layout control for TV templates
+CREATE TABLE IF NOT EXISTS display_configs (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  client_id uuid REFERENCES clients(id) ON DELETE CASCADE,
+  display_slug text,
+  layout_config jsonb NOT NULL DEFAULT '{}'::jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
 -- Optional sample insert for quick testing (commented out by default)

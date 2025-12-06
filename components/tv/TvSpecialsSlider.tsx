@@ -1,120 +1,102 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { TvMenuItem } from './TvMenuGrid';
 
-// Exportamos el tipo TvSpecial para que page.tsx siga feliz
-export type TvSpecial = TvMenuItem & {
-  imageUrl?: string | null;
-};
+export interface TvSpecial {
+  id: string;
+  name: string;
+  description: string | null;
+  priceText: string;
+  imageUrl: string | null;
+  badge?: string;
+}
 
 interface TvSpecialsSliderProps {
   specials: TvSpecial[];
 }
 
-const cardVariants = {
-  initial: { opacity: 0, x: 30, scale: 0.98 },
-  animate: { opacity: 1, x: 0, scale: 1 },
-  exit: { opacity: 0, x: -30, scale: 0.98 }
-};
-
 export default function TvSpecialsSlider({ specials }: TvSpecialsSliderProps) {
-  if (!specials || specials.length === 0) {
-    return null;
-  }
-
-  const [index, setIndex] = useState(0);
-  const active = specials[index];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const slides = useMemo(() => specials ?? [], [specials]);
+  const currentSpecial = slides[currentIndex % slides.length];
 
   useEffect(() => {
-    if (specials.length <= 1) return;
+    if (!slides.length) return undefined;
 
-    const id = setInterval(() => {
-      setIndex((prev) => (prev + 1) % specials.length);
-    }, 7000); // cada 7 segundos rota
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 6000);
 
-    return () => clearInterval(id);
-  }, [specials.length]);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  if (!slides.length || !currentSpecial) return null;
 
   return (
-    <div className="flex h-full w-full items-stretch">
-      <AnimatePresence initial={false} mode="wait">
-        <motion.div
-          key={active.id}
-          variants={cardVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-          className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-black/45 p-4 text-left shadow-xl shadow-black/70 backdrop-blur-md md:p-5"
-        >
-          {/* Badges superiores */}
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-slate-900 shadow-md shadow-amber-800/60">
-              <span>Special</span>
-            </div>
-            <p className="text-[0.65rem] uppercase tracking-[0.25em] text-slate-200/80">
-              Rotating every few seconds
-            </p>
-          </div>
+    <div className="relative w-full">
+      <div className="mb-2 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg font-bold text-white shadow-lg shadow-black/40">
+          ★
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary">Today&apos;s Special</p>
+          <p className="text-base text-slate-200">Chef&apos;s highlights rotating every few minutes</p>
+        </div>
+      </div>
 
-          {/* Imagen grande vertical */}
-          <div className="relative mb-4 flex min-h-[160px] flex-1 items-center justify-center md:min-h-[200px] lg:min-h-[230px]">
-            <div className="pointer-events-none absolute inset-6 rounded-3xl bg-gradient-to-tr from-emerald-500/12 via-amber-400/10 to-transparent blur-2xl" />
-            {active.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <motion.img
-                src={active.imageUrl}
-                alt={active.name}
-                className="relative z-10 h-full w-auto max-h-[260px] max-w-full object-contain drop-shadow-[0_26px_55px_rgba(0,0,0,0.9)]"
-                initial={{ scale: 0.96, opacity: 0.9 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-              />
-            ) : (
-              <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-slate-900/80 text-2xl font-bold uppercase text-white shadow-inner shadow-black/60">
-                {active.name.charAt(0)}
-              </div>
-            )}
-          </div>
-
-          {/* Texto del especial */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-bold uppercase tracking-[0.18em] text-white md:text-xl">
-              {active.name}
-            </h3>
-            {active.description ? (
-              <p className="text-sm text-slate-200/90 md:text-[0.95rem]">
-                {active.description}
-              </p>
-            ) : null}
-          </div>
-
-          {/* Precio grande abajo derecha */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0b1220]/80 shadow-2xl shadow-black/50 backdrop-blur-lg">
+        <AnimatePresence mode="wait">
           <motion.div
-            className="mt-4 flex items-center justify-between gap-3"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: 'easeOut', delay: 0.1 }}
+            key={currentSpecial.id}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="grid w-full grid-cols-1 overflow-hidden md:grid-cols-[1.1fr_0.9fr]"
           >
-            <div className="text-[0.7rem] uppercase tracking-[0.26em] text-slate-300/90">
-              Today&apos;s Featured Item
+            <div className="flex flex-col justify-center gap-4 px-6 py-8 lg:px-10">
+              {currentSpecial.badge ? (
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand-primary/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-brand-primary">
+                  {currentSpecial.badge}
+                </span>
+              ) : null}
+              <div className="space-y-2">
+                <p className="text-sm uppercase tracking-[0.25em] text-brand-accent">Special</p>
+                <h2 className="font-heading text-4xl leading-tight text-white lg:text-5xl">{currentSpecial.name}</h2>
+                <p className="text-lg text-slate-200 lg:text-xl">{currentSpecial.description}</p>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-slate-300">
+                <span className="inline-flex h-2 w-2 rounded-full bg-brand-accent" />
+                Freshly prepared · Limited availability
+              </div>
             </div>
-            <motion.div
-              className="rounded-full bg-emerald-500 px-5 py-2 text-base font-extrabold text-slate-900 shadow-lg shadow-emerald-500/50 md:text-lg"
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{
-                duration: 1.8,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            >
-              {active.priceText}
-            </motion.div>
+
+            <div className="relative min-h-[260px] bg-gradient-to-br from-black/60 via-black/50 to-black/60">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: currentSpecial.imageUrl
+                    ? `linear-gradient(180deg,rgba(5,8,22,0.6),rgba(5,8,22,0.85)), url(${currentSpecial.imageUrl})`
+                    : 'linear-gradient(180deg,rgba(5,8,22,0.6),rgba(5,8,22,0.85))',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(249,115,22,0.35),transparent_45%),radial-gradient(circle_at_70%_70%,rgba(34,197,94,0.35),transparent_45%)] mix-blend-screen" />
+              <div className="relative flex h-full items-center justify-center p-6">
+                <div className="flex flex-col items-center gap-3 rounded-2xl bg-black/50 px-6 py-4 shadow-[0_18px_48px_rgba(0,0,0,0.45)] ring-1 ring-white/10">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/80">Only</p>
+                  <p className="rounded-full bg-emerald-500 px-5 py-2 text-3xl font-black text-slate-900 shadow-lg shadow-emerald-500/50">
+                    {currentSpecial.priceText}
+                  </p>
+                  <p className="text-xs text-slate-200">+ tax</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
-        </motion.div>
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
